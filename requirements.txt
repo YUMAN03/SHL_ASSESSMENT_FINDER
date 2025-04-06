@@ -1,0 +1,9 @@
+streamlit
+langchain
+langchain-core
+langchain-groq
+langchain-pinecone
+pinecone-client
+pinecone-text
+python-dotenv
+re
