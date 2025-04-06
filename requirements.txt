@@ -6,3 +6,5 @@ langchain-pinecone
 pinecone-client
 pinecone-text
 python-dotenv
+fastapi
+uvicorn[standard]
