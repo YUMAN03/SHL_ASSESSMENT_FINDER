@@ -29,7 +29,6 @@ groq_api_key = os.getenv("groq_api_key")
 
 # --- LangChain setup ---
 llm = ChatGroq(temperature=0, groq_api_key=groq_api_key, model='llama3-70b-8192')
-=
 pc = Pinecone(api_key=pinecone_api_key)
 index = pc.Index("shldb2")
 embeddings = PineconeEmbeddings(api_key=pinecone_api_key, model='multilingual-e5-large')
