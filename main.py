@@ -36,7 +36,7 @@ vectorstore = PineconeVectorStore(index=index, embedding=embeddings)
 
 retriever = vectorstore.as_retriever(
     search_type='similarity_score_threshold',
-    search_kwargs={'k': 10, 'score_threshold': 0.8},
+    search_kwargs={'k': 20, 'score_threshold': 0.8},
 )
 
 template = '''
