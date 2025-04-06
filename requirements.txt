@@ -6,4 +6,3 @@ langchain-pinecone
 pinecone-client
 pinecone-text
 python-dotenv
-re
