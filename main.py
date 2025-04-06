@@ -36,13 +36,13 @@ vectorstore = PineconeVectorStore(index=index, embedding=embeddings)
 
 retriever = vectorstore.as_retriever(
     search_type='similarity_score_threshold',
-    search_kwargs={'k': 20, 'score_threshold': 0.7},
+    search_kwargs={'k': 10, 'score_threshold': 0.8},
 )
 
 template = '''
 List of assesments : \n
 {context}
-From the list of 20 assessments I've identified, select the top 1-5 options that best match technical skills (prioritized) followed by soft skills. Focus especially on programming languages and technical frameworks.
+From the list of 10 assessments I've identified, select the top 5 options that best match technical skills (prioritized) followed by soft skills. Focus especially on programming languages and technical frameworks.
 
 For each assessment, provide ONLY the following information in this exact format:
 - Title: [exact title]
