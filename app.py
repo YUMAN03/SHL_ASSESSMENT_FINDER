@@ -13,7 +13,7 @@ if st.button("Search"):
     else:
         with st.spinner("Searching and analyzing assessments..."):
             try:
-                api_url = "http://127.0.0.1:8000/query"
+                api_url = "https://shlassessmentfinder-production.up.railway.app/query"
                 response = requests.get(api_url, params={"q": query})
                 if response.status_code == 200:
                     data = response.json()
