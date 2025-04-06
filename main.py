@@ -89,3 +89,6 @@ def query_llm(q: str = Query(..., description="User query text")):
     response = llm_chain.invoke({"context": context, "query": q})
     assessments = parse_assessments(response.content)
     return {"query": q, "results": assessments}
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000)
