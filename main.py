@@ -589,11 +589,10 @@ def parse_api_assessments(response_text):
         print(f"Error parsing assessments: {e}")
         return []
 
-app = FastAPI(default_response_class=JSONResponse)
 
 @app.get("/health")
 def health_check():
-    return json.dumps({"status": "healthy"},indent=4)
+    return JSONResponse(content={"status": "healthy"},media_type="application/json")
 
 @app.post("/recommend")
 async def recommend_assessments(request: RecommendRequest):
@@ -613,7 +612,7 @@ async def recommend_assessments(request: RecommendRequest):
                 "test_type": ["Knowledge & Skills"]
             }]
         
-        return json.dumps({"recommended_assessments": assessments},indent=4)
+        return JSONResponse(content={"recommended_assessments": assessments}, media_type="application/json")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating recommendations: {str(e)}")
 
