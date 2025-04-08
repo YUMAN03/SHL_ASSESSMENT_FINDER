@@ -218,7 +218,7 @@ def parse_assessment_response(text):
 # 1. Health Check Endpoint
 @app.get("/health")
 def health_check():
-    return {"status": "healthy"}
+    return {{"status": "healthy"}}
 
 # 2. Assessment Recommendation Endpoint
 @app.post("/recommend")
