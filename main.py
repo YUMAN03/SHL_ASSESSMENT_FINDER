@@ -588,15 +588,12 @@ def parse_api_assessments(response_text):
         print(f"Error parsing assessments: {e}")
         return []
 
-# 1. Health Check Endpoint (Required by API spec)
+app = FastAPI(default_response_class=JSONResponse)
+
 @app.get("/health")
 def health_check():
-    pretty_json = json.dumps({"status": "healthy"}, indent=4)
-    return JSONResponse(content=pretty_json, media_type="application/json")
+    return {"status": "healthy"}
 
-
-
-# 2. Assessment Recommendation Endpoint (Required by API spec)
 @app.post("/recommend")
 async def recommend_assessments(request: RecommendRequest):
     try:
@@ -604,7 +601,7 @@ async def recommend_assessments(request: RecommendRequest):
         context = "\n\n".join(doc.page_content for doc in docs)
         response = api_chain.invoke({"context": context, "query": request.query})
         assessments = parse_api_assessments(response.content)
-
+        
         if not assessments:
             assessments = [{
                 "url": "https://www.shl.com/solutions/products/product-catalog/view/general-aptitude/",
@@ -614,10 +611,8 @@ async def recommend_assessments(request: RecommendRequest):
                 "remote_support": "Yes",
                 "test_type": ["Knowledge & Skills"]
             }]
-
-        pretty_json = json.dumps({"recommended_assessments": assessments}, indent=4)
-        return JSONResponse(content=pretty_json, media_type="application/json")
-
+        
+        return {"recommended_assessments": assessments}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating recommendations: {str(e)}")
 
