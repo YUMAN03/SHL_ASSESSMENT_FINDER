@@ -591,12 +591,9 @@ def parse_api_assessments(response_text):
 # 1. Health Check Endpoint (Required by API spec)
 @app.get("/health")
 def health_check():
-    return JSONResponse(
-        content={"status": "healthy"},
-        media_type="application/json",
-        status_code=200,
-        indent=4
-    )
+    pretty_json = json.dumps({"status": "healthy"}, indent=4)
+    return JSONResponse(content=pretty_json, media_type="application/json")
+
 
 
 # 2. Assessment Recommendation Endpoint (Required by API spec)
@@ -618,12 +615,8 @@ async def recommend_assessments(request: RecommendRequest):
                 "test_type": ["Knowledge & Skills"]
             }]
 
-        return JSONResponse(
-            content={"recommended_assessments": assessments},
-            media_type="application/json",
-            status_code=200,
-            indent=4  # This ensures pretty-printed output
-        )
+        pretty_json = json.dumps({"recommended_assessments": assessments}, indent=4)
+        return JSONResponse(content=pretty_json, media_type="application/json")
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating recommendations: {str(e)}")
