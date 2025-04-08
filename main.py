@@ -401,6 +401,8 @@ from pinecone import Pinecone
 from langchain_pinecone import PineconeEmbeddings
 from dotenv import load_dotenv
 from pydantic import BaseModel
+from fastapi.responses import JSONResponse
+
 import os
 import re
 
@@ -437,7 +439,7 @@ retriever = vectorstore.as_retriever(
 frontend_template = '''
 List of assessments:
 {context}
-From the list of assessments I've identified, select the top options (up to 10) that best match technical skills (prioritized) followed by soft skills. Focus especially on programming languages and technical frameworks.
+From the list of assessments I've identified, select the top options (up to 10 or fewer if there are less matches) . Focus especially on programming languages and technical frameworks.
 
 For each assessment, provide ONLY the following information in this exact format:
 - Title: [exact title]
@@ -451,7 +453,8 @@ Important instructions:
 1. Return between 1-10 relevant assessments, with most relevant first
 2. The duration listed must not exceed what's actually specified
 3. Present ONLY the assessment list - no introduction, explanation, or conclusion
-4. Sort by technical skill match first, then soft skill relevance
+4. If there are technical skills(like programming languages and technical frameworks)mentioned then prioritize them.
+5. Otherwise, prioritize by soft skils. 
 
 Answer for the following query:
 {query}
@@ -472,6 +475,13 @@ For each assessment, extract the following attributes in JSON format:
 - duration: The duration in minutes (as an integer)
 - remote_support: "Yes" if the assessment can be taken remotely, "No" otherwise
 - test_type: An array of strings representing categories (e.g., ["Knowledge & Skills"], ["Competencies", "Personality & Behaviour"])
+
+Important instructions:
+1. Return between 1-10 relevant assessments, with most relevant first
+2. The duration listed must not exceed what's actually specified
+3. Present ONLY the assessment list - no introduction, explanation, or conclusion
+4. If there are technical skills(like programming languages and technical frameworks)mentioned then prioritize them.
+5. Otherwise, prioritize by soft skils. 
 
 Query: {query}
 '''
@@ -581,25 +591,24 @@ def parse_api_assessments(response_text):
 # 1. Health Check Endpoint (Required by API spec)
 @app.get("/health")
 def health_check():
-    return {"status": "healthy"}
+    return JSONResponse(
+        content={"status": "healthy"},
+        media_type="application/json",
+        status_code=200,
+        indent=4
+    )
+
 
 # 2. Assessment Recommendation Endpoint (Required by API spec)
 @app.post("/recommend")
 async def recommend_assessments(request: RecommendRequest):
     try:
-        # Get relevant documents from vector store
         docs = retriever.invoke(request.query)
         context = "\n\n".join(doc.page_content for doc in docs)
-        
-        # Generate recommendations using LLM
         response = api_chain.invoke({"context": context, "query": request.query})
-        
-        # Parse the response to extract assessment data
         assessments = parse_api_assessments(response.content)
-        
-        # Ensure at least one assessment is returned
+
         if not assessments:
-            # If no assessments were found, provide a default one
             assessments = [{
                 "url": "https://www.shl.com/solutions/products/product-catalog/view/general-aptitude/",
                 "adaptive_support": "No",
@@ -608,8 +617,14 @@ async def recommend_assessments(request: RecommendRequest):
                 "remote_support": "Yes",
                 "test_type": ["Knowledge & Skills"]
             }]
-        
-        return {"recommended_assessments": assessments}
+
+        return JSONResponse(
+            content={"recommended_assessments": assessments},
+            media_type="application/json",
+            status_code=200,
+            indent=4  # This ensures pretty-printed output
+        )
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating recommendations: {str(e)}")
 
