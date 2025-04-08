@@ -207,8 +207,9 @@ async def recommend_assessments(request: RecommendRequest):
         context = "\n\n".join(doc.page_content for doc in docs)
         response = api_chain.invoke({"context": context, "query": request.query})
         assessments = parse_api_assessments(response.content)
-        
+
         if not assessments:
+            print("No recommendations found")  # 👈 This is the log line
             assessments = [{
                 "url": "https://www.shl.com/solutions/products/product-catalog/view/general-aptitude/",
                 "adaptive_support": "No",
@@ -217,28 +218,23 @@ async def recommend_assessments(request: RecommendRequest):
                 "remote_support": "Yes",
                 "test_type": ["Knowledge & Skills"]
             }]
-        
+
         return JSONResponse(content={"recommended_assessments": assessments}, media_type="application/json")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating recommendations: {str(e)}")
+
 
 # 3. Original Query Endpoint (For the Streamlit frontend)
 @app.get("/query")
 def query_llm(q: str = Query(..., description="User query text")):
     try:
-        # Get relevant documents from vector store
         docs = retriever.invoke(q)
         context = "\n\n".join(doc.page_content for doc in docs)
-        
-        # Generate recommendations using LLM
         response = frontend_chain.invoke({"context": context, "query": q})
-        
-        # Parse the response to extract assessment data
         assessments = parse_frontend_assessments(response.content)
-        
-        # Ensure at least one assessment is returned
+
         if not assessments:
-            # If no assessments were found, provide a default one
+            print("No recommendations found")  # 👈 log when nothing is found
             assessments = [{
                 "title": "General Aptitude Assessment",
                 "url": "https://www.shl.com/solutions/products/product-catalog/view/general-aptitude/",
@@ -247,10 +243,11 @@ def query_llm(q: str = Query(..., description="User query text")):
                 "duration": "30 minutes",
                 "test_type": "Knowledge & Skills"
             }]
-            
+
         return {"query": q, "results": assessments}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing query: {str(e)}")
+
     
 @app.get("/")
 def index():
