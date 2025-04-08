@@ -481,6 +481,7 @@ Important instructions:
 2. The duration listed must not exceed what's actually specified
 3. Present ONLY the assessment list - no introduction, explanation, or conclusion
 4. If there are technical skills(like programming languages and technical frameworks)mentioned then prioritize them.
+6. Focus especially on programming languages and technical frameworks.
 5. Otherwise, prioritize by soft skils. 
 
 Query: {query}
@@ -592,7 +593,7 @@ app = FastAPI(default_response_class=JSONResponse)
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy"}
+    return json.dumps({"status": "healthy"},indent=4)
 
 @app.post("/recommend")
 async def recommend_assessments(request: RecommendRequest):
@@ -612,7 +613,7 @@ async def recommend_assessments(request: RecommendRequest):
                 "test_type": ["Knowledge & Skills"]
             }]
         
-        return {"recommended_assessments": assessments}
+        return json.dumps({"recommended_assessments": assessments},indent=4)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating recommendations: {str(e)}")
 
