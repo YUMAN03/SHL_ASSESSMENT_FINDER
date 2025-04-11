@@ -70,6 +70,12 @@ A full-stack AI-powered tool to search and recommend SHL assessments based on us
 
 ![alt text](image-1.png)
 
+## FrontEnd on Streamlit Cloud:
+https://j6q7mqxbeur2xlmy3bhkhc.streamlit.app/
+
+## Backend on Railways for checking API endpoints:
+https://shlassessmentfinder-production.up.railway.app/
+
 ### Remark: I am using a free deployment service. If it crashes, and you are an evaluator please contact me at mohdyuman03@gmail.com.
 
 
