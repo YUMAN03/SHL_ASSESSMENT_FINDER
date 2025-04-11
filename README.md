@@ -56,7 +56,8 @@ A full-stack AI-powered tool to search and recommend SHL assessments based on us
 
 ## 📬 API Endpoint
 
-- `GET /query?q=your_question` — returns the top 5 filtered assessments via LLM
+- <backend_url>/health      -gives running status(GET request)
+- <backend_url>/recommend   -gives top recommendations in json format(POST request)
 
 ## 🙌 Acknowledgements
 
